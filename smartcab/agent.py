@@ -8,7 +8,7 @@ class LearningAgent(Agent):
     """ An agent that learns to drive in the Smartcab world.
         This is the object you will be modifying. """ 
 
-    def __init__(self, env, learning=False, epsilon=0.9, alpha=0.7):
+    def __init__(self, env, learning=False, epsilon=1, alpha=0.5):
         # epsilon = 1
         # 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9
         # F    D   C    D  F   C   B    D   F
@@ -47,13 +47,11 @@ class LearningAgent(Agent):
             self.epsilon = 0.0
             self.alpha = 0.0
         else:
-            self.epsilon = math.exp(- 0.1 * self.trialNum)
+            # self.epsilon = math.exp(- 0.1 * self.trialNum)
             # self.epsilon = ((self.trialNum)**(-2))
             # self.epsilon = (0.9)**(self.trialNum)
+            self.epsilon = math.exp(-0.015*self.trialNum)
             self.trialNum += 1.0
-
-
-
 
         return None
 
@@ -85,17 +83,18 @@ class LearningAgent(Agent):
         ###########
         # Calculate the maximum Q-value of all actions for a given state
 
-        values_Q = []
+        # values_Q = []
 
         # @@@ WHY IS IT WRONG?
         # for a, v in self.Q[state].item():
-        for a, v in self.Q[state].items():
-        # ....IS items(), NOT item()....
-            values_Q.append(v)
+        # for a, v in self.Q[state].items():
+        # # ....IS items(), NOT item()....
+        #     values_Q.append(v)
 
         # for action in self.valid_actions:
         #     values_Q.append(self.Q[state][action])
 
+        values_Q = self.Q[state].values()
         maxQ = max(values_Q)
 
         return maxQ 
@@ -117,7 +116,7 @@ class LearningAgent(Agent):
 
         if self.learning:
             if not state in self.Q.keys():
-                self.Q[state]={None:1.0, 'forward':1.0, 'left':1.0, 'right':1.0}
+                self.Q[state]={None:0.0, 'forward':0.0, 'left':0.0, 'right':0.0}
             # if length_old < length_new:
                 # for 
 
@@ -220,14 +219,14 @@ def run():
     #   display      - set to False to disable the GUI if PyGame is enabled
     #   log_metrics  - set to True to log trial and simulation results to /logs
     #   optimized    - set to True to change the default log file name
-    sim = Simulator(env, update_delay = 0.01, log_metrics = True, display=False, optimized=True)
+    sim = Simulator(env, update_delay = 0.005, log_metrics = True, display=False, optimized=True)
     
     ##############
     # Run the simulator
     # Flags:
     #   tolerance  - epsilon tolerance before beginning testing, default is 0.05 
     #   n_test     - discrete number of testing trials to perform, default is 0
-    sim.run(n_test = 100, tolerance = 0.1)
+    sim.run(n_test = 400, tolerance = 0.005)
 
     # OPTIMIZED
     # 1. only change 'n_test' from 10 to 30, it's not good. 
