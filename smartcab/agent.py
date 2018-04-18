@@ -50,7 +50,7 @@ class LearningAgent(Agent):
             # self.epsilon = math.exp(- 0.1 * self.trialNum)
             # self.epsilon = ((self.trialNum)**(-2))
             # self.epsilon = (0.9)**(self.trialNum)
-            self.epsilon = math.exp(-0.015*self.trialNum)
+            self.epsilon = math.exp(-0.006*self.trialNum)
             self.trialNum += 1.0
 
         return None
@@ -115,8 +115,9 @@ class LearningAgent(Agent):
         # length_new = len(states_old.add(state))
 
         if self.learning:
-            if not state in self.Q.keys():
-                self.Q[state]={None:0.0, 'forward':0.0, 'left':0.0, 'right':0.0}
+            # if not state in self.Q.keys():
+            #     self.Q[state]={None:0.0, 'forward':0.0, 'left':0.0, 'right':0.0}
+            self.Q.setdefault(state, {action: 0.0 for action in self.valid_actions})
             # if length_old < length_new:
                 # for 
 
@@ -226,7 +227,7 @@ def run():
     # Flags:
     #   tolerance  - epsilon tolerance before beginning testing, default is 0.05 
     #   n_test     - discrete number of testing trials to perform, default is 0
-    sim.run(n_test = 400, tolerance = 0.005)
+    sim.run(n_test = 20, tolerance = 0.01)
 
     # OPTIMIZED
     # 1. only change 'n_test' from 10 to 30, it's not good. 
@@ -240,3 +241,9 @@ def run():
 
 if __name__ == '__main__':
     run()
+
+
+    # tolerance 0.01 epsilon 1  e^(-0.006) alpha 0.05
+    # A+/B     F/A     A+/A
+    # tolerance 0.01 epsilon 1 e^(-0.009)	alpha 0.06
+    #（A+/A)	   (F/A)	(D/A+)..
